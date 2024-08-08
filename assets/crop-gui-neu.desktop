@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Crop GUI Neu
+Comment=Crop JPEG images using a GUI
+Exec=crop_gui_neu.py
+Icon=io.github.lwbt.CropGuiNeu
+Terminal=false
+Type=Application
+Categories=Graphics;

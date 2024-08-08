@@ -1,0 +1,150 @@
+= Crop GUI Neu
+:hide-uri-scheme:
+// Enable keyboard macros
+:experimental:
+:toc:
+:toclevels: 4
+:icons: font
+:note-caption: ℹ️
+:tip-caption: 💡
+:warning-caption: ⚠️
+:caution-caption: 🔥
+:important-caption: ❗
+
+image::/assets/Screenshot_from_2024-08-09_14-22-34_crop-gui-neu.png[application window,852,699]
+
+== What is the intended use of this program?
+
+* It is a simple GTK application to crop JPEG images using Python by selecting a cropping area and saving a copy.
+* Unlike general purpose image manipulation programs it avoids https://en.wikipedia.org/wiki/Generation_loss[generation loss].
+
+Short, non-technical explanation: +
+Digital images are made up of tiny dots called pixels. These pixels are
+arranged in groups. If you cut an image along the lines between these groups,
+you can save the image without losing quality. This is because you don't have
+to redo the whole image.
+
+Technical explanation:
+
+[quote,https://github.com/jepler/cropgui/]
+____
+It turns out that debian's jpegtran has a "-crop" flag which performs lossless
+cropping of jpeg images as long as the crop is to a multiple of what the
+manpage calls the "iMCU boundary", usually an 8x8 or 16x16 block of pixels.
+This feature may have been pioneered by Guido of jpegclub.org some years ago.
+____
+
+[WARNING]
+====
+This is an attempt to re-implement an already existing solution:
+
+https://github.com/jepler/cropgui/
+
+I wanted to avoid executing non-standard installer scripts on my new Linux installations.
+After looking around for alternative solutions or how the repository could be
+improved, I decided to start with a new project.
+
+This script does not have feature parity yet.
+====
+
+=== Supported formats
+
+* JPEG
+
+It's just a simple GUI around JPEGtran at the moment.
+Eventually it will support other popular formats.
+
+== Installation
+
+=== Option A: Pipx
+
+This installation method is currently preferred.
+
+First you will need to install the link:#dependencies[] for your platform.
+
+Given that you have already installed Python and
+https://pipx.pypa.io/stable/installation/[pipx]
+you can install the application using pipx like this:
+
+[source,bash]
+----
+pipx install git+https://github.com/lwbt/CropGuiNeu.git
+----
+
+=== Option B: Flatpak
+
+This application is in development and will eventually be available on Flathub.
+Until then, you must manually clone the repository and build it using the SDK.
+
+[source,bash]
+----
+flatpak --user install \
+  org.gnome.Platform/x86_64/46
+  org.gnome.Sdk/x86_64/46 \
+
+flatpak-builder \
+  --force-clean build-dir "io.github.lwbt.CropGuiNeu.yaml"
+flatpak-builder \
+  --user \
+  --install \
+  --force-clean build-dir "io.github.lwbt.CropGuiNeu.yaml"
+----
+
+The Flatpak version is unable to access EXIF metadata because it lacks the necessary Perl dependency for `exiftool`.
+This functionality will be implemented differently for the Flathub release.
+
+== Usage
+
+[source,bash]
+----
+$ crop_gui_neu --help
+usage: crop_gui_neu [-h] [image]
+
+Crop a JPEG image using a GUI.
+
+positional arguments:
+  image       Path to the JPEG image to crop
+----
+
+If you installed the application through Flatpak you should be able to run it with:
+
+[source,bash]
+----
+flatpak --user run io.github.lwbt.CropGuiNeu
+----
+
+== Dependencies
+
+Currently the script requires the following external progams to be installed:
+
+* `exiftool`
+* `jpegtran`
+
+*Ubuntu/Debian:*
+
+[source,bash]
+----
+sudo apt-get update
+sudo apt-get install -y libjpeg-turbo-progs libimage-exiftool-perl
+----
+
+*Fedora:*
+
+[source,bash]
+----
+sudo dnf install -y libjpeg-turbo-utils perl-Image-ExifTool
+----
+
+*Arch Linux:*
+
+[source,bash]
+----
+sudo pacman -S exiftool libjpeg-turbo
+----
+
+*macOS using Homebrew:*
+
+[source,bash]
+----
+brew install exiftool libjpeg-turbo
+----

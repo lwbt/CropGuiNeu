@@ -1,0 +1,63 @@
+---
+# cspell:ignore wayland buildsystem
+app-id: io.github.lwbt.CropGuiNeu
+runtime: org.gnome.Platform
+runtime-version: '46'
+sdk: org.gnome.Sdk
+command: crop_gui_neu
+finish-args:
+  - --share=network
+  - --share=ipc
+  - --socket=x11
+  - --socket=wayland
+  - --filesystem=home
+  - --env=PATH=/app/bin:$PATH
+cleanup:
+  # cspell:disable
+  - /bin/cjpeg
+  - /bin/djpeg
+  - /bin/rdjpgcom
+  - /bin/tjbench
+  - /bin/wrjpgcom
+  - /include
+  - /lib/debug
+  - /lib/python*/site-packages/crop_gui_neu/gui_*.py
+  - /lib/python*/site-packages/crop_gui_neu/__pycache__
+  - /lib/python*/site-packages/__pycache__
+  - /lib64/cmake
+  - /share/doc
+  - /share/man
+  # cspell:disable
+modules:
+  # Module for JPEG Tools
+  - name: jpeg-tools
+    buildsystem: cmake-ninja
+    sources:
+      - type: git
+        url: https://github.com/libjpeg-turbo/libjpeg-turbo.git
+        branch: main
+  # Module for ExifTool
+  - name: exiftool
+    buildsystem: simple
+    build-commands:
+      - perl Makefile.PL PREFIX=/app && make && make install
+    sources:
+      - type: git
+        url: https://github.com/exiftool/exiftool.git
+        branch: master
+  # Main application module
+  - name: crop-gui-neu
+    buildsystem: simple
+    build-commands:
+      - pip3 install --prefix=/app --no-deps .
+    sources:
+      - type: dir
+        path: .
+  # Desktop integration
+  - name: crop-gui-neu-desktop
+    buildsystem: simple
+    build-commands:
+      - install -D crop-gui-neu.desktop /app/share/applications/io.github.lwbt.CropGuiNeu.desktop
+    sources:
+      - type: dir
+        path: assets

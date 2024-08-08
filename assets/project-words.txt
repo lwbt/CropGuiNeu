@@ -1,0 +1,26 @@
+# AsciiDoc
+adoc
+toclevels
+
+# Names
+Exif
+Tegge
+cropgui
+exiftool
+github
+lwbt
+
+# pre-commit
+pyupgrade
+
+# ./README.adoc
+Argparse
+pipx
+systemd-creds
+oneshot
+
+# cli.py
+gethostname
+
+# ./tests/test_cli.py
+setenv

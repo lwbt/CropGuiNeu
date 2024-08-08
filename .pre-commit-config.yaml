@@ -1,0 +1,123 @@
+---
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+# cspell:ignore autofix shellcheck shfmt yamlfmt gitleaks unattend scrollback creds
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+      # non-default
+      - id: check-case-conflict
+      - id: check-executables-have-shebangs
+        exclude: |
+          (?x)^(
+              path/to/file\.py
+          )$
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-shebang-scripts-are-executable
+      - id: check-symlinks
+      - id: check-toml
+      - id: check-xml
+      - id: detect-private-key
+      - id: mixed-line-ending
+      - id: pretty-format-json
+        args: ["--autofix"]
+  - repo: https://github.com/google/yamlfmt
+    rev: v0.11.0
+    hooks:
+      - id: yamlfmt
+        args: ["-formatter", "include_document_start=true,scan_folded_as_literal=true"]
+  - repo: https://github.com/koalaman/shellcheck-precommit
+    rev: v0.9.0
+    hooks:
+      - id: shellcheck
+        args: ["--color=always", "--external-sources"]
+        types: ["executable", "file", "shell", "text"]
+        exclude: |
+          (?x)^(
+              path/to/file\.py
+          )$
+  - repo: https://github.com/scop/pre-commit-shfmt
+    rev: v3.8.0-1
+    hooks:
+      - id: shfmt
+        args: ["--diff", "--indent", "2", "--binary-next-line", "--space-redirects", "--case-indent"]
+        types: ["executable", "file", "shell", "text"]
+        exclude: |
+          (?x)^(
+              path/to/file\.py
+          )$
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.15.0
+    hooks:
+      - id: pyupgrade
+        args: [--py38-plus]
+  - repo: https://github.com/psf/black
+    rev: 23.12.1
+    hooks:
+      - id: black
+        args: [--line-length=79]
+  - repo: https://github.com/PyCQA/flake8
+    rev: 7.0.0
+    hooks:
+      - id: flake8
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.18.2
+    hooks:
+      - id: gitleaks
+        args: ["--no-banner"]
+  - repo: https://github.com/amperser/proselint
+    rev: 0.13.0
+    hooks:
+      - id: proselint
+        types: ["asciidoc", "file", "non-executable", "plain-text", "text"]
+  - repo: https://github.com/streetsidesoftware/cspell-cli
+    rev: v8.4.0
+    hooks:
+      - id: cspell
+        additional_dependencies:
+          - "@cspell/dict-de-de"
+          - "@cspell/dict-vim"
+          - "@cspell/dict-win32"
+        args:
+          - "--locale"
+          - "en,en-US,de-DE"
+          - "--no-progress"
+          - "--no-summary"
+          # Include files and directories starting with '.' when matching
+          # globs.
+          - "--dot"
+          # Show the surrounding text around an issue.
+          - "--show-context"
+          # Ignore files matching glob patterns found in .gitignore files.
+          #- "--gitignore"
+          # For easier adding of words to dictionaries.
+          #- "--words-only"
+          #- "--unique"
+          # This might eventually be useful for some tricky issues.
+          #- "--verbose"
+          #- "--no-cache"
+          #- "--cache-reset"
+          # Not useful at all unless you are prepared to filter JSON output
+          # longer than your scrollback buffer.
+          #- "--debug"
+        types: ["file", "text"]
+        exclude: |
+          (?x)^(
+              .*\.cast|
+              .*\.ini|
+              .*\.json|
+              .*\.ps1|
+              .*\.svg|
+              \.gitignore|
+              \.proselintrc\.json|
+              assets/Big_buck_bunny_poster_big\.LICENSE\.txt|
+              assets/crop-gui-neu\.desktop|
+              assets/cropgui_install\.sh|
+              path/to/file\.py
+          )$

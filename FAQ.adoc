@@ -1,0 +1,35 @@
+= Crop GUI Neu -- FAQ
+:hide-uri-scheme:
+// Enable keyboard macros
+:experimental:
+:toc:
+:toclevels: 4
+:icons: font
+:note-caption: ℹ️
+:tip-caption: 💡
+:warning-caption: ⚠️
+:caution-caption: 🔥
+:important-caption: ❗
+
+== General
+
+=== Why did you choose this name?
+
+_"Neu"_ is German for _"new"_.
+
+I was looking for a short and descriptive name.
+It isn't the most creative name and it sounds a bit awkward, but so does  _"Helvetica Neue"_.
+If anyone wants to create a better tool, please do, I left _"Crop GUI Neo"_ free just for you.
+
+=== Installer Script
+
+The original installation script for https://github.com/jepler/cropgui/[Crop GUI]
+is a bit difficult to read and understand.
+I made a new version which also includes an uninstall option.
+
+*Important:*
+This script is for the _old_ version of Crop GUI by jepler.
+My version uses either Pipx or Flatpak for installation.
+
+You can find the script here:
+link:/assets/cropgui_install.sh[]
