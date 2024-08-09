@@ -3,24 +3,23 @@ adoc
 toclevels
 
 # Names
+Cython
 Exif
+Flatpak
+Numpy
 Tegge
 cropgui
 exiftool
+flatpak
 github
 lwbt
+numpy
+opencv
+scikit
+setuptools
 
 # pre-commit
 pyupgrade
 
 # ./README.adoc
-Argparse
 pipx
-systemd-creds
-oneshot
-
-# cli.py
-gethostname
-
-# ./tests/test_cli.py
-setenv

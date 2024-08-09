@@ -1,8 +1,9 @@
-build/
 *.egg-info/
 */__pycache__/
 *_cropped.jpg
 .flatpak-builder/
+build/
+dist/
 
 # Swap
 [._]*.s[a-v][a-z]

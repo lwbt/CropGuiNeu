@@ -1,0 +1,28 @@
+# This file exists despite using Poetry because I had to resort to Flatpak PIP
+# Generator while Flatpak Python Poetry Lockfile Generator was not working
+# correctly and could not be fixed by me with GPT assistance.
+# https://github.com/flatpak/flatpak-builder-tools/pull/353
+
+# Required by flatpak-builder.
+poetry-core
+
+PyGObject
+Pillow
+
+# Required by opencv-python when building with flatpak-builder.
+scikit-build
+meson-python
+# Numpy 2.0 requires version 3.x, but does not detect it.
+#Cython
+# Numpy 2.0 did not work with the current runtimes.
+numpy==1.26.4
+
+# Put opencv-python last.
+#opencv-python==4.6.0.66
+# Python 3.11 -- Which is part of the current 2023 flatpak runtimes.
+opencv-python==4.7.0.72
+# Build failures.
+#opencv-python==4.8.0.76
+#opencv-python==4.8.1.78
+#opencv-python==4.9.0.80
+#opencv-python==4.10.0.82

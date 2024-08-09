@@ -21,14 +21,27 @@ cleanup:
   - /bin/wrjpgcom
   - /include
   - /lib/debug
-  - /lib/python*/site-packages/crop_gui_neu/gui_*.py
-  - /lib/python*/site-packages/crop_gui_neu/__pycache__
+  - /lib/python*/site-packages/*/*/*/__pycache__
+  - /lib/python*/site-packages/*/*/__pycache__
+  - /lib/python*/site-packages/*/__pycache__
   - /lib/python*/site-packages/__pycache__
+  - /lib/python*/site-packages/meson_python-*.dist-info
+  - /lib/python*/site-packages/mesonpy
+  - /lib/python*/site-packages/numpy/*/tests
+  - /lib/python*/site-packages/poetry
+  - /lib/python*/site-packages/poetry_core-*.dist-info
+  - /lib/python*/site-packages/scikit_build-*.dist-info
+  - /lib/python*/site-packages/skbuild
   - /lib64/cmake
   - /share/doc
   - /share/man
   # cspell:disable
 modules:
+  # Choose to install dependencies with pip or poetry file.
+  # Pip
+  - python3-requirements.json
+  # Poetry
+  #- generated-poetry-sources.json
   # Module for JPEG Tools
   - name: jpeg-tools
     buildsystem: cmake-ninja
@@ -36,20 +49,12 @@ modules:
       - type: git
         url: https://github.com/libjpeg-turbo/libjpeg-turbo.git
         branch: main
-  # Module for ExifTool
-  - name: exiftool
-    buildsystem: simple
-    build-commands:
-      - perl Makefile.PL PREFIX=/app && make && make install
-    sources:
-      - type: git
-        url: https://github.com/exiftool/exiftool.git
-        branch: master
   # Main application module
   - name: crop-gui-neu
     buildsystem: simple
     build-commands:
-      - pip3 install --prefix=/app --no-deps .
+      - pip3 install --prefix=/app --no-deps --no-build-isolation .
+      #- poetry install --prefix=/app --no-deps --no-build-isolation .
     sources:
       - type: dir
         path: .

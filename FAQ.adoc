@@ -21,11 +21,26 @@ I was looking for a short and descriptive name.
 It isn't the most creative name and it sounds a bit awkward, but so does  _"Helvetica Neue"_.
 If anyone wants to create a better tool, please do, I left _"Crop GUI Neo"_ free just for you.
 
+=== Why build it?
+
+This is an attempt to re-implement an already existing solution:
+https://github.com/jepler/cropgui/
+
+I wanted to avoid executing non-standard installer scripts on my new Linux installations.
+After looking around for alternative solutions or how the repository could be
+improved, I decided to start with a new project.
+
+This script does not have feature parity yet.
+
+At first, it looked like an easy project, until I tried to replace `exiftool`
+and pulled in a lot of dependencies for what was just a little Perl script.
+I will eventually rewrite parts when I learn new languages, but don't expect
+this to be completed any time soon.
+
 === Installer Script
 
-The original installation script for https://github.com/jepler/cropgui/[Crop GUI]
-is a bit difficult to read and understand.
-I made a new version which also includes an uninstall option.
+The original installation script for Crop GUI is a bit difficult to read and
+understand. I made a new version which also includes an uninstall option.
 
 *Important:*
 This script is for the _old_ version of Crop GUI by jepler.
@@ -33,3 +48,50 @@ My version uses either Pipx or Flatpak for installation.
 
 You can find the script here:
 link:/assets/cropgui_install.sh[]
+
+The style if the script is defined by `shfmt` in pre-commit with a few
+parameters that I prefer.
+
+== Development
+
+=== Building with Flatpak
+
+Dependencies:
+
+* `python3-requirement-parser` on Ubuntu to run `flatpak-pip-generator.py` with Pip.
+* `python3-toml` on Ubuntu to run `flatpak-poetry-generator.py` with Poetry.
+
+[source,bash]
+----
+# Clean environment and install dependencies.
+# rm poetry.lock && poetry env remove --all
+# poetry install
+
+# Create requirements file for pip.
+pipx run \
+  https://github.com/lwbt/flatpak-builder-tools/raw/master/pip/flatpak-pip-generator.py \
+  --runtime='org.freedesktop.Sdk' --requirements-file='requirements.txt'
+
+# Create requirements file for poetry. (Not fully implemented yet, fails to build.)
+# pipx run \
+#   https://github.com/flatpak/flatpak-builder-tools/raw/master/poetry/flatpak-poetry-generator.py \
+#  "poetry.lock"
+# pipx run \
+#  https://github.com/GabMus/flatpak-builder-tools/raw/master/poetry/flatpak-poetry-generator.py \
+#  "poetry.lock"
+
+flatpak --user install \
+  org.gnome.Platform/x86_64/46
+  org.gnome.Sdk/x86_64/46 \
+
+# Install with pipx
+# pipx install .
+
+flatpak-builder \
+  --force-clean build-dir "io.github.lwbt.CropGuiNeu.yaml"
+
+flatpak-builder \
+  --user \
+  --install \
+  --force-clean build-dir "io.github.lwbt.CropGuiNeu.yaml"
+----

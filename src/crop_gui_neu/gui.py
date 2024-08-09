@@ -8,18 +8,32 @@ import sys
 import math
 import subprocess
 
-from gi.repository import Gtk, Gdk, GdkPixbuf, GLib  # Import GLib
+from crop_gui_neu.jpeg_info import get_image_attributes
 
 gi.require_version("Gtk", "3.0")
 gi.require_version("GdkPixbuf", "2.0")
-
-# from PIL import Image
-# #from PIL import Image, ExifTags
-# #from PIL.ExifTags import TAGS, GPSTAGS
-# import exifread
+from gi.repository import Gtk, Gdk, GdkPixbuf, GLib  # noqa: E402
 
 
-class CropJPEGApp(Gtk.Window):
+def dict_to_string_aligned(dictionary, column_width=16):
+    """Formats a dictionary into a string with aligned columns.
+
+    Args:
+        attributes (dict): The dictionary to format.
+        column_width (int, optional): The desired column width. Defaults to 16.
+
+    Returns:
+        str: The formatted string.
+    """
+
+    lines = (
+        f"{key}: {' ' * (column_width - len(key))} {value}"
+        for key, value in dictionary.items()
+    )
+    return "\n".join(lines)
+
+
+class CropJpegApp(Gtk.Window):
     def __init__(self, image_path=None):
         super().__init__(title="Crop GUI Neu")
         self.set_position(Gtk.WindowPosition.CENTER)
@@ -63,10 +77,17 @@ class CropJPEGApp(Gtk.Window):
         self.header_bar.pack_end(self.save_button)
 
         # Show Info Button
-        self.info_button = Gtk.Button(label="Show Info")
+        # self.info_button = Gtk.Button(label="Show Info")
+        self.info_button = Gtk.Button()
+        self.info_button.set_image(
+            Gtk.Image.new_from_icon_name(
+                "document-page-setup-symbolic", Gtk.IconSize.BUTTON
+            )
+        )
+        self.info_button.set_tooltip_text("Show Image Info")
         self.info_button.connect("clicked", self.show_image_info)
         self.info_button.set_sensitive(False)
-        self.header_bar.pack_end(self.info_button)
+        self.header_bar.pack_start(self.info_button)
 
         # Scrollable window setup
         self.scrolled_window = Gtk.ScrolledWindow()
@@ -429,31 +450,25 @@ class CropJPEGApp(Gtk.Window):
 
     def show_image_info(self, widget):
         if self.image_path:
-            # Retrieve image attributes using exiftool
-            try:
-                result = subprocess.run(
-                    ["exiftool", self.image_path],
-                    capture_output=True,
-                    text=True,
-                )
-                exif_info = "Exif info:\n" + result.stdout.strip()
-            except Exception as e:
-                exif_info = f"Error retrieving image info: {e}"
+            image_attributes = get_image_attributes(self.image_path)
+            popover_message = "Image attributes:\n\n" + dict_to_string_aligned(
+                image_attributes
+            )
 
             # Add crop coordinates if they exist
             if self.crop_coords:
                 x1, y1, x2, y2 = self.crop_coords
                 crop_info = (
-                    f"Crop Coordinates:\n"
+                    f"Crop coordinates:\n\n"
                     f"Left:   {x1} px\n"
                     f"Top:    {y1} px\n"
                     f"Right:  {x2} px\n"
                     f"Bottom: {y2} px"
                 )
-                exif_info = f"{crop_info}\n\n{exif_info}"
+                popover_message = f"{popover_message}\n\n\n{crop_info}"
 
             # Show the information in a popover with monospace font
-            self._show_info_popover(widget, exif_info)
+            self._show_info_popover(widget, popover_message)
 
     def _show_info_popover(self, widget, text):
         popover = Gtk.Popover.new(widget)
@@ -485,7 +500,7 @@ def main():
             print("Error: The file must be a JPEG image.")
             sys.exit(1)
 
-    app = CropJPEGApp(image_path=args.image)
+    app = CropJpegApp(image_path=args.image)
     app.connect("destroy", Gtk.main_quit)
     app.show_all()
     Gtk.main()

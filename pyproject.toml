@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "crop_gui_neu"
+version = "24.8.3"
+description = "A simple GTK application to crop JPEG images"
+authors = ["Benjamin TEGGE <silly-afoot-stuffy@duck.com>"]
+license = "MIT"
+readme = "README.adoc"
+packages = [{include = "crop_gui_neu", from = "src"}]
+
+[tool.poetry.scripts]
+crop_gui_neu = "crop_gui_neu.gui:main"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+PyGObject = "^3.0"
+opencv-python = "^4.8"
+Pillow = "^10.4"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
