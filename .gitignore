@@ -1,9 +1,11 @@
 *.egg-info/
 */__pycache__/
 *_cropped.jpg
+*.flatpak
 .flatpak-builder/
 build/
 dist/
+repo/
 
 # Swap
 [._]*.s[a-v][a-z]

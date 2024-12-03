@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.lwbt.CropGuiNeu</id>
+
+  <name>CropGuiNeu</name>
+  <summary>Crop images without quality loss</summary>
+
+  <metadata_license>MIT</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+
+  <description>
+    <p>
+      tbd
+    </p>
+  </description>
+
+  <launchable type="desktop-id">crop-gui-neu.desktop</launchable>
+</component>

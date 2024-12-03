@@ -53,16 +53,15 @@ modules:
   - name: crop-gui-neu
     buildsystem: simple
     build-commands:
+      - install -D crop-gui-neu.desktop $FLATPAK_DEST/share/applications/$FLATPAK_ID.desktop
+      - install -D $FLATPAK_ID.svg $FLATPAK_DEST/share/icons/hicolor/scalable/apps/$FLATPAK_ID.svg
+      #- install -D crop-gui-neu.desktop /app/share/applications/io.github.lwbt.CropGuiNeu.desktop
       - pip3 install --prefix=/app --no-deps --no-build-isolation .
       #- poetry install --prefix=/app --no-deps --no-build-isolation .
     sources:
       - type: dir
         path: .
-  # Desktop integration
-  - name: crop-gui-neu-desktop
-    buildsystem: simple
-    build-commands:
-      - install -D crop-gui-neu.desktop /app/share/applications/io.github.lwbt.CropGuiNeu.desktop
-    sources:
-      - type: dir
-        path: assets
+      - type: file
+        path: assets/crop-gui-neu.desktop
+      - type: file
+        path: assets/io.github.lwbt.CropGuiNeu.svg

@@ -109,11 +109,11 @@ flatpak --user install \
   org.gnome.Sdk/x86_64/46 \
 
 flatpak-builder \
-  --force-clean build-dir "io.github.lwbt.CropGuiNeu.yaml"
+  --force-clean build-dir "io.github.lwbt.CropGuiNeu.yml"
 flatpak-builder \
   --user \
   --install \
-  --force-clean build-dir "io.github.lwbt.CropGuiNeu.yaml"
+  --force-clean build-dir "io.github.lwbt.CropGuiNeu.yml"
 ----
 
 == Usage

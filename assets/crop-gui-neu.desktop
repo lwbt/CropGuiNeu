@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Crop GUI Neu
 Comment=Crop JPEG images using a GUI
-Exec=crop_gui_neu.py
+Exec=crop_gui_neu
 Icon=io.github.lwbt.CropGuiNeu
 Terminal=false
 Type=Application
