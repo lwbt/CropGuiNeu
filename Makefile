@@ -10,8 +10,6 @@ BUILD_DATE := $(shell date -I)
 GH_ACCOUNT := $(shell gh auth status --active | grep "Logged in to github.com account" | cut -d " " -f 9)
 ARCH ?= $(shell arch)
 
-#.PHONY: all pkg-% pkg pkg-x64 pkg-arm64 pkg-x86_64 pkg-aarch64 bundle-% bundle bundle-x64 bundle-arm64 bundle-x86_64 bundle-aarch64 lint check-meta check-versions
-
 .PHONY: default
 default: setup-sdk pkg bundle
 
@@ -24,6 +22,22 @@ check: lint check-meta check-versions workflow-check
 .PHONY: setup-sdk-builder
 setup-sdk-builder:
 	flatpak --user install -y flathub org.flatpak.Builder
+
+.PHONY: setup-sdk-pip
+setup-sdk-pip:
+	git -c advice.detachedHead=false clone --depth 1 https://github.com/flatpak/flatpak-builder-tools.git
+	python3 -m venv venv
+	source venv/bin/activate
+	pip3 install requirements-parser
+
+# TODO: This is a mess, clean upm because this needs to be done regularly.
+pypi-dependencies:
+	source venv/bin/activate
+	flatpak-builder-tools/pip/flatpak-pip-generator --runtime='org.freedesktop.Sdk//24.08' --requirements-file='requirements.txt' --output
+	#flatpak-builder-tools/pip/flatpak-pip-generator --runtime='org.gnome.Platform//24.08' --requirements-file='requirements.txt' --output pypi-dependencies
+	#flatpak-builder-tools/pip/flatpak-pip-generator --runtime='org.freedesktop.Sdk//24.08' --requirements-file='requirements.txt' --output pypi-dependencies
+	#flatpak-builder-tools/poetry/flatpak-poetry-generator.py poetry.lock
+	# npx prettier -w ...
 
 .PHONY: setup-sdk-%
 setup-sdk-%:
@@ -72,7 +86,7 @@ bundle-both: bundle-x86_64 bundle-aarch64
 .PHONY: releases
 release:
 	gh release create $(VERSION) \
-	  --repo $(GH_ACCOUNT)/$(FLATPAK_ID) \
+	  --repo $(GH_ACCOUNT)/$(APPNAME) \
 	  --title "$(VERSION) $(BUILD_DATE)" \
 	  --notes "Update $(APPNAME) to $(VERSION). These are not CI/CD releases! The assets have been built on my workstation." \
 	  --prerelease=false \
