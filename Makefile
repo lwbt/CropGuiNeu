@@ -1,93 +1,75 @@
+# cspell:ignore APPMETA metainfo pyproject aarch64 flathub APPNAME
 FLATPAK_ID=io.github.lwbt.CropGuiNeu
 MANIFEST=$(FLATPAK_ID).yml
 APPMETA=$(FLATPAK_ID).metainfo.xml
 APPNAME=CropGuiNeu
 # TODO fetch from pyproject.toml
 VERSION := 0.1
-#RUNTIME_VER=24.08
 RUNTIME_VER=46
 BUILD_DATE := $(shell date -I)
 GH_ACCOUNT := $(shell gh auth status --active | grep "Logged in to github.com account" | cut -d " " -f 9)
+ARCH ?= $(shell arch)
 
-.PHONY: all setup-sdk pkg-% pkg pkg-x64 pkg-arm64 pkg-x86_64 pkg-aarch64 bundle-% bundle bundle-x64 bundle-arm64 bundle-x86_64 bundle-aarch64 lint check-meta check-versions
+#.PHONY: all pkg-% pkg pkg-x64 pkg-arm64 pkg-x86_64 pkg-aarch64 bundle-% bundle bundle-x64 bundle-arm64 bundle-x86_64 bundle-aarch64 lint check-meta check-versions
 
-# TODO: Does not work, why?
-#pkg-%:
-#	flatpak --user run org.flatpak.Builder \
-#	  --user \
-#	  --arch $* \
-#	  --repo "repo" \
-#	  --force-clean \
-#	  "build-dir_$*" \
-#	  "$(MANIFEST)"
-#bundle-%:
-#	flatpak build-bundle \
-#	  "repo" \
-#	  --arch $* \
-#	  "$(APPNAME)-$(VERSION)-TESTING-$(BUILD_DATE)-$*.flatpak" \
-#	  "$(FLATPAK_ID)"
+.PHONY: default
+default: setup-sdk pkg bundle
 
-# TODO: Replace and document the shorthands
-all: setup-sdk pkg-x64 bundle-x64
+.PHONY: all
+all: setup-sdk-both pkg-both bundle-both
 
-# TODO: Split into different arches
-setup-sdk:
+.PHONY: check
+check: lint check-meta check-versions workflow-check
+
+.PHONY: setup-sdk-builder
+setup-sdk-builder:
 	flatpak --user install -y flathub org.flatpak.Builder
-	flatpak --user install -y org.gnome.Platform/x86_64/$(RUNTIME_VER)
-	flatpak --user install -y org.gnome.Sdk/x86_64/$(RUNTIME_VER)
-#	flatpak --user install -y org.gnome.Platform/aarch64/$(RUNTIME_VER)
-#	flatpak --user install -y org.gnome.Sdk/aarch64/$(RUNTIME_VER)
 
-pkg: pkg-x64 pkg-arm64
-#pkg: pkg-x86_64 pkg-aarch64
+.PHONY: setup-sdk-%
+setup-sdk-%:
+	flatpak --user install -y org.gnome.Platform/$*/$(RUNTIME_VER)
+	flatpak --user install -y org.gnome.Sdk/$*/$(RUNTIME_VER)
 
-#pkg-x64: pkg-x86_64
-#pkg-x64: pkg-x86_64 $(MANIFEST)
-#pkg-x86_64: pkg-x86_64 $(MANIFEST)
-pkg-x64: $(MANIFEST)
+.PHONY: setup-sdk
+setup-sdk: setup-sdk-builder setup-sdk-$(ARCH)
+
+.PHONY: setup-sdk-both
+setup-sdk-both: setup-sdk-builder setup-sdk-x86_64 setup-sdk-aarch64
+
+.PHONY: pkg-%
+pkg-%: $(MANIFEST)
 	flatpak --user run org.flatpak.Builder \
 	  --user \
-	  --arch x86_64 \
+	  --arch $* \
 	  --repo "repo" \
 	  --force-clean \
-	  "build-dir_x86_64" \
+	  "build-dir__$*" \
 	  "$(MANIFEST)"
 
-#pkg-arm64: pkg-aarch64
-#pkg-arm64: pkg-aarch64 $(MANIFEST)
-#pkg-aarch64: pkg-aarch64 $(MANIFEST)
-pkg-arm64: $(MANIFEST)
-	flatpak --user run org.flatpak.Builder \
-	  --user \
-	  --arch aarch64 \
-	  --repo "repo" \
-	  --force-clean \
-	  "build-dir_aarch64" \
-	  "$(MANIFEST)"
+.PHONY: pkg
+pkg: pkg-$(ARCH)
 
-#bundle: bundle-x86_64 bundle-aarch64
-bundle: bundle-x64 bundle-arm64
+.PHONY: pkg-both
+pkg-both: pkg-x86_64 pkg-aarch64
+
+.PHONY: bundle-%
+bundle-%:
+	flatpak build-bundle \
+	  "repo" \
+	  --arch $* \
+	  "$(APPNAME)-$(VERSION)-TESTING-$(BUILD_DATE)-$*.flatpak" \
+	  "$(FLATPAK_ID)"
+
+.PHONY: bundle
+bundle: bundle-$(ARCH)
 	sha512sum $(APPNAME)-$(VERSION)-TESTING-$(BUILD_DATE)-*.flatpak > checksums.txt
 
-#bundle-x64: bundle-x86_64
-#bundle-x86_64: bundle-x86_64
-bundle-x64:
-	flatpak build-bundle \
-	  "repo" \
-	  --arch x86_64 \
-	  "$(APPNAME)-$(VERSION)-TESTING-$(BUILD_DATE)-amd64.flatpak" \
-	  "$(FLATPAK_ID)"
-
-#bundle-arm64: bundle-aarch64
-#bundle-aarch64: bundle-aarch64
-bundle-arm64:
-	flatpak build-bundle \
-	  "repo" \
-	  --arch aarch64 \
-	  "$(APPNAME)-$(VERSION)-TESTING-$(BUILD_DATE)-arm64.flatpak" \
-	  "$(FLATPAK_ID)"
+.PHONY: bundle-both
+bundle-both: bundle-x86_64 bundle-aarch64
+	sha512sum $(APPNAME)-$(VERSION)-TESTING-$(BUILD_DATE)-*.flatpak > checksums.txt
 
 # Only use this when you have bundles built for both platforms.
+.PHONY: releases
 release:
 	gh release create $(VERSION) \
 	  --repo $(GH_ACCOUNT)/$(FLATPAK_ID) \
@@ -97,16 +79,20 @@ release:
 	  $(APPNAME)-$(VERSION)-TESTING-$(BUILD_DATE)-*.flatpak checksums.txt
 #	  --draft \
 
+.PHONY: lint
 lint:
 	flatpak run --command=flatpak-builder-lint org.flatpak.Builder manifest $(MANIFEST)
-	flatpak run --command=flatpak-builder-lint org.flatpak.Builder repo repo
+#	flatpak run --command=flatpak-builder-lint org.flatpak.Builder repo repo
 
+.PHONY: check-meta
 check-meta:
 	flatpak run --command=appstream-util org.flatpak.Builder validate $(APPMETA)
 
+.PHONY: check-versions
 check-versions:
 	sed -i -e 's/#\(branch:\)/\1/g' "$(MANIFEST)"
 	flatpak run org.flathub.flatpak-external-data-checker "$(MANIFEST)"
 
+.PHONY: workflow-check
 workflow-check:
 	pre-commit autoupdate

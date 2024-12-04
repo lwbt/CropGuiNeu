@@ -8,11 +8,31 @@
   <metadata_license>MIT</metadata_license>
   <project_license>GPL-3.0-or-later</project_license>
 
+  <url type="homepage">https://github.com/lwbt/CropGuiNeu</url>
+
   <description>
     <p>
       tbd
     </p>
   </description>
+  <releases>
+    <release version="0.1.0" date="2024-12-04">
+      <description>
+        <p>To be done.</p>
+      </description>
+    </release>
+  </releases>
 
-  <launchable type="desktop-id">crop-gui-neu.desktop</launchable>
+  <developer id="io.github.lwbt">
+    <name>lwbt</name>
+  </developer>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://github.com/lwbt/CropGuiNeu/raw/main/assets/Screenshot_from_2024-08-09_14-22-34_crop-gui-neu.png</image>
+      <!-- TODO: Add captions for each screenshot -->
+      <caption>Easy cropping</caption>
+    </screenshot>
+  </screenshots>
+  <content_rating type="oars-1.1"/>
+  <launchable type="desktop-id">io.github.lwbt.CropGuiNeu.desktop</launchable>
 </component>

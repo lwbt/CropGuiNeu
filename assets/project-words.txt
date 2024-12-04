@@ -23,3 +23,7 @@ pyupgrade
 
 # ./README.adoc
 pipx
+
+# metainfo
+metainfo
+launchable

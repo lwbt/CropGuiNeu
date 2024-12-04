@@ -47,14 +47,38 @@ Eventually it will support other popular formats.
 
 == Installation
 
-=== Option A: Pipx
+This application is in development and will eventually be available for Linux on Flathub.
 
-This installation method is currently preferred.
+=== Option A: Flatpak bundle via GitHub releases
+
+.Download a bundle and install it:
+[source,bash]
+----
+flatpak --user install CropGuiNeu-*-TESTING-*.flatpak
+----
+
+=== Option B: Flatpak, build it yourself
+
+You can manually clone the repository and build it using the SDK.
+The `Makefile` contains all required instructions to build it yourself.
+
+.Just run:
+[source,bash]
+----
+make
+
+flatpak --user install CropGuiNeu-*-TESTING-*.flatpak
+----
+
+=== Option C: Pipx/UV
+
+This installation method was previously preferred.
+If you can't use Flatpak, like on a Mac, you can still use Pipx/UV and install the dependencies.
 
 First you will need to install the link:#dependencies[] for your platform.
 
 Given that you have already installed Python and
-https://pipx.pypa.io/stable/installation/[pipx]
+https://pipx.pypa.io/stable/installation/[Pipx]
 you can install the application using pipx like this:
 
 [source,bash]
@@ -95,25 +119,6 @@ sudo pacman -S libjpeg-turbo
 [source,bash]
 ----
 brew install libjpeg-turbo
-----
-
-=== Option B: Flatpak
-
-This application is in development and will eventually be available on Flathub.
-Until then, you must manually clone the repository and build it using the SDK.
-
-[source,bash]
-----
-flatpak --user install \
-  org.gnome.Platform/x86_64/46
-  org.gnome.Sdk/x86_64/46 \
-
-flatpak-builder \
-  --force-clean build-dir "io.github.lwbt.CropGuiNeu.yml"
-flatpak-builder \
-  --user \
-  --install \
-  --force-clean build-dir "io.github.lwbt.CropGuiNeu.yml"
 ----
 
 == Usage

@@ -3,6 +3,7 @@
 *_cropped.jpg
 *.flatpak
 .flatpak-builder/
+checksums.txt
 build/
 dist/
 repo/
